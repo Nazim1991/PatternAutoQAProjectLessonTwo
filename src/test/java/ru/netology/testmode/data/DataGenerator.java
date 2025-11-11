@@ -26,21 +26,29 @@ public class DataGenerator {
     }
 
     private static void sendRequest(RegistrationDto user) {
+        given()
+                .spec(requestSpec)
+                .body(user)
+                .when().log().all()
+                .post("/api/system/users")
+                .then().log().all()
+                .statusCode(200);
+
         // TODO: отправить запрос на указанный в требованиях path, передав в body запроса объект user
         //  и не забудьте передать подготовленную спецификацию requestSpec.
         //  Пример реализации метода показан в условии к задаче.
     }
 
     public static String getRandomLogin() {
+        return FAKER.name().username();
         // TODO: добавить логику для объявления переменной login и задания её значения, для генерации
         //  случайного логина используйте faker
-        return login;
     }
 
     public static String getRandomPassword() {
+        return FAKER.internet().password();
         // TODO: добавить логику для объявления переменной password и задания её значения, для генерации
         //  случайного пароля используйте faker
-        return password;
     }
 
     public static class Registration {
@@ -48,14 +56,16 @@ public class DataGenerator {
         }
 
         public static RegistrationDto getUser(String status) {
+            return new RegistrationDto(getRandomLogin(), getRandomPassword(), status);
             // TODO: создать пользователя user используя методы getRandomLogin(), getRandomPassword() и параметр status
-            return user;
         }
 
         public static RegistrationDto getRegisteredUser(String status) {
+            var user = getUser(status);
+            sendRequest(user);
+            return user;
             // TODO: объявить переменную registeredUser и присвоить ей значение возвращённое getUser(status).
             // Послать запрос на регистрацию пользователя с помощью вызова sendRequest(registeredUser)
-            return registeredUser;
         }
     }
 
